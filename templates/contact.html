@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Contact form</title>
+    </head>
+    <body>
+        <h1>Contact us</h1>
+        <form action="/contact" method="POST">
+            <fieldset>
+                <legend>Fill in your data</legend>
+                <input type="text" id="fname" name="fname" value="">
+                <label for="fname">Your name.</label>
+                <input type="email" id="email" name="email" value="">
+                <label for="email">Your email.</label>
+            </fieldset>
+            <textarea id="message" name="message" rows="15" cols="45"></textarea>
+            <label for="message">Write a message</label>
+            <br><br>
+            <label for="file">Select a file</label>
+            <input type="file" id="file" name="Upload the car problem" multiple>
+            <input type="submit" value="Submit">
+            <!-- <label for="submit">Submit the message.</label> -->
+        </form>
+    </body>
+</html>

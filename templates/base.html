@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mi Traductor</title>
+        <style>
+            .auth-links {
+                float:right;
+                margin-right: 20px;
+            }
+            
+            .auth-links a {
+                margin-left: 10px;
+                text-decoration: none;
+                color: #007BFF;
+            }
+        </style>
+    </head>
+
+    <body>
+        <header>
+            <nav>
+                <h1>Traductor</h1>
+
+                <div class="auth-links">
+                    <a href="{{ url_for('auth.login') }}">Iniciar sesión</a>
+                    <a href="{{ url_for('auth.register') }}">Crear cuenta</a>
+                </div>
+            </nav>
+        </header>
+        <main>
+            <!-- Aqui va el contenido principal -->
+        </main>
+    </body>
+
+</html>

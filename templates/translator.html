@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Enter the text to translate</title>
+    </head>
+    <body>
+        <form method="POST" action="/">
+            {{ form.hidden_tag }}
+            <div>
+                {{ form.name.label }}<br> {{ form.name(size=40) }}
+            </div>
+
+            <div>
+                {{ form.email.label }}<br> {{ form.email(size=40) }}
+            </div>
+
+            <div>
+                {{ form.message.label }} {{ form.message(rows=10, cols=50)}}
+            </div>
+            <input type="textarea" value="Go">
+            {% if form.name.errors %}
+                <ul class="errors">
+                    {% for error in form.name.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </form>
+        <form method="POST" action="">
+    </body>
+</html>
