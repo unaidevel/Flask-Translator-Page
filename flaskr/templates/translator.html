@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translator</title>
+</head>
+<body>
+    <h1>Translator Form</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.text_to_translate.label }}<br>
+            {{ form.text_to_translate(size=50) }}<br>
+            {% for error in form.text_to_translate.errors %}
+                <span>{{ error }}</span><br>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.source_language.label }}<br>
+            {{ form.source_language(size=50) }}<br>
+            {% for error in form.source_language.errors %}
+                <span>{{ error }}</span><br>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.destination_language.label }}<br>
+            {{ form.destination_language(size=50) }}<br>
+            {% for error in form.destination_language.errors %}
+                <span>{{ error }}</span><br>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.text_translated.label }}<br>
+            {{ form.text_translated(size=50) }}<br>
+            {% for error in form.text_translated.errors %}
+                <span>{{ error }}</span><br>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.submit() }}
+        </div>
+    </form>
+</body>
+</html>
