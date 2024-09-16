@@ -6,41 +6,66 @@ from wtforms.validators import DataRequired
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
 import os
-import sqlite3
+import sqlite3 
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from .auth import auth_bp
 from .models import db
-
+from authlib.integrations.flask_client import OAuth
+from .auth import auth_bp, google_bp, github_bp
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
+oauth = OAuth()
+
 
 def create_app():
     app = Flask(__name__) 
-    app.config['SECRET_KEY'] = 'your_secret_key'
+    app.secret_key = os.environ.get("FLASK_SECRET_KEY", "supersecretkey")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contact.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['OAUTH_CREDENTIALS'] = {
+        'google': {
+            'client_id': 'your-google-client-id',
+            'client_secret': 'your-google-client-secret'
+        },
+        'github': {
+            'client_id': 'your-github-client-id',
+            'client_secret': 'your-github-client-secret'
+        }
+    }
+    oauth.init_app(app)
+    # oauth.init_app(app)
+
+
 
     db.init_app(app)
     migrate.init_app(app, db)
     # login_manager.init_app(app)
 
-    # Importar y registrar Blueprints después de inicializar `db` y `login_manager`
-    from . import auth
-    app.register_blueprint(auth.auth_bp, url_prefix = '/auth')
-    # app.register_blueprint(auth.auth_bp, url_prefix='/auth')
+
+    app.register_blueprint(auth_bp, url_prefix = '/auth')
+    app.register_blueprint(google_bp, url_prefix='/google')
+    app.register_blueprint(github_bp, url_prefix='/github')
+
+    # Definiciones de modelos y formularios 
+    # @app.register_blueprint(google, url_prefix ='/login')
+
+    # @app.register_blueprint(github, url_prefix='/login')
 
     # Crear tablas
-    with app.app_context():
-        db.create_all()
+    # with app.app_context():
+    #     db.create_all()
 
-    # Definiciones de modelos y formularios adicionales aquí
 
     @app.route('/')
-    def home_page():
-        return 'It\'s the home page!'
+    def home():
+        # if not google.authorized:
+        #     return redirect("google.login")
+        # resp = google.get("/plus/v1/people/me")
+        # assert resp.ok, resp.text
+        # return f"You have login as {resp.json()['displayname']}"
+        return 'This is the home page!'
 
     class Contact(db.Model):
         id = db.Column(db.Integer, primary_key=True)
@@ -99,7 +124,7 @@ def create_app():
             return redirect(url_for('index'))
         return render_template('upload.html', form=form)
 
-    @app.route('/about', methods=['POST'])
+    @app.route('/about', methods=['POST', 'GET'])
     def about():
         return render_template('index.html')
 

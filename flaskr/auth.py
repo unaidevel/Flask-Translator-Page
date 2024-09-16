@@ -4,8 +4,89 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, DateField
 from wtforms.validators import InputRequired, Length, Email, EqualTo
 from .models import db, User
-
+from flask_dance.contrib.google import make_google_blueprint, google
+from flask_dance.contrib.github import make_github_blueprint, github
+from flask_login import login_user
+from authlib.integrations.flask_client import OAuth
 auth_bp = Blueprint('auth', __name__)
+
+oauth = OAuth()
+
+google_bp = make_google_blueprint(
+    # name ='google',
+    client_id='818389227768-itld020e1paj3tadvr1hv09l71fttvqt.apps.googleusercontent.com',
+    client_secret='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',
+    # authorize_url = 'https://accounts.google.com/o/oauth2/auth',
+    # authrozize_params =None,
+    # access_token_url='https://accounts.google.com/o/oauth2/token',
+    # access_token_params=None,
+    # client_kwargs={'scope':'openid profile email'}
+    redirect_to='google_login'
+)
+
+github_bp = make_github_blueprint(
+    # name='github',
+    client_id='Ov23li3YtwHLawJKXo6M',
+    client_secret='d1496f610855a791948ec57b1d11694a7015c757',
+    # authorize_url='https://github.com/login/oauth/authorize',
+    # access_token_url='https://github.com/login/oauth/access_token',
+    # access_token_params=None,
+    # client_kwargs={'scope': 'user:email'}
+    redirect_url='github_login'
+)
+
+@auth_bp.route('/google.login')
+def google_login():
+    if not google.authorized:
+        return redirect(url_for('google.login'))
+    
+    resp = google.get('/oauth2/v2/userinfo')
+    assert resp.ok, resp.text
+    user_info = resp.json()
+    
+    email = user_info['email']
+
+    user = User.query.filter_by(email=email).first()
+
+    if user is None:
+        user = User(email=email)
+        db.session.add(user)
+        db.session.commit()
+
+    login_user(user)
+
+    #     return f"Welcome {resp.json()['displayname']}!"
+    return redirect(url_for('dashboard'))
+
+
+
+@auth_bp.route('/github.login')
+def github_login():
+    if not github.authorized:
+        return redirect(url_for('github.login'))
+    
+    resp = github.get('/user')
+    assert resp.ok, resp.text
+    user_info = resp.json()
+    username = user_info['login']
+
+    email_resp = github.get('/user/emails')
+    if email_resp.ok:
+        emails = email_resp.json()
+        email = next((e['email'] for e in emails if e['primary']), None)
+    else:
+        email = None
+    
+    user = User.query.filter_by(username=username).first()
+
+    if user is None:
+        user = User(username=username, email=email)
+        db.session.add(user)
+        db.session.commit()
+    login_user(user)
+    return redirect(url_for('dashboard'))
+
+
 
 class RegistrationForm(FlaskForm):
     fname = StringField('First Name', validators=[InputRequired(), Length(max=70)])
@@ -27,7 +108,7 @@ def register():
                 last_name=form.lname.data,
                 birthday=form.birthday.data,
                 email=form.email.data
-            )
+                )
             new_user.set_password(form.password.data)
             db.session.add(new_user)
             db.session.commit()
