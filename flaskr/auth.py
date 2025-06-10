@@ -14,8 +14,8 @@ oauth = OAuth()
 
 google_bp = make_google_blueprint(
     # name ='google',
-    client_id='818389227768-itld020e1paj3tadvr1hv09l71fttvqt.apps.googleusercontent.com',
-    client_secret='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',
+    client_id='',
+    client_secret='',
     # authorize_url = 'https://accounts.google.com/o/oauth2/auth',
     # authrozize_params =None,
     # access_token_url='https://accounts.google.com/o/oauth2/token',
@@ -26,8 +26,8 @@ google_bp = make_google_blueprint(
 
 github_bp = make_github_blueprint(
     # name='github',
-    client_id='Ov23li3YtwHLawJKXo6M',
-    client_secret='d1496f610855a791948ec57b1d11694a7015c757',
+    client_id='',
+    client_secret='',
     # authorize_url='https://github.com/login/oauth/authorize',
     # access_token_url='https://github.com/login/oauth/access_token',
     # access_token_params=None,
